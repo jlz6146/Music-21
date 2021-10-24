@@ -20,8 +20,8 @@ public class PostgresSSHTest1 {
         Connection conn = null;
         Session session = null;
 
-        String adminUser = "jlz6146";
-        String adminPass = "Rochester404@";
+        String adminUser = "AAAA";
+        String adminPass = "HELP";
 
         //String logInQuery = "select userName from User" + " where userName == " + userName;
         //String user = "user"; //change to your username
