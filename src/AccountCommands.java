@@ -23,33 +23,89 @@ public class AccountCommands {
 
 
     /**
-     * Handles the follow command
+     * Handles the follow command on the database
      * @param conn - the database connection
-     * @param local_name - the name of the follower; person inputting command
+     * @param local_email - the email of the follower; person inputting command
      * @param other_email - the email of the person to be followed
-     * @throws SQLException
      */
-    public static void follow(Connection conn, String local_name, String other_email) throws SQLException {
-        //TODO: implement the call in PostgresSSHTest
-        Statement stment = conn.createStatement();
-        ResultSet rset = stment.executeQuery("" +
-                "select email from User where email = 'other_email'");
+    public static void follow(Connection conn, String local_email, String other_email){
+        //TODO: implement the call in PostgresSSHTest & test if works
+        ResultSet rset; Statement stment; String check;
 
-        String check = rset.getString("email");
+        try {
+            stment = conn.createStatement();
+
+            //Query if a user holds the given email
+            rset = stment.executeQuery("" +
+                    "select email from users where email = 'other_email'");
+
+            check = rset.getString("email");
+        }
+        catch(SQLException sqle){
+            System.out.println("SQLException: " +sqle);
+            return;
+        }
+
+        //Check if user exists under given email
         if(check.equals(other_email)){
-            String other_name = rset.getString("username");
-            stment.executeUpdate("" +
-                    "insert into follows values('" + local_name + "', '" + other_name + "')");
+            try {
+                stment.executeUpdate("" +
+                        "insert into follows values('" + local_email + "', '" + other_email + "')");
+            }
+            catch(SQLException sqle){
+                System.out.println("Could not insert tuple. " +sqle);
+            }
         }
         else{
             System.out.println("The given email is not connected to a user.");
         }
 
 
-        stment.close();
+        try{ stment.close(); }
+        catch(SQLException sqle){ System.out.println("SQLException: " +sqle); }
     }
 
-    public static void unfollow(Connection conn, String local_name, String other_email){
+    /**
+     * Handles the unfollow command on the database
+     * @param conn - the database connection
+     * @param local_email - the email of the follower
+     * @param other_email - the email of the person to be unfollowed
+     */
+    public static void unfollow(Connection conn, String local_email, String other_email){
+        //TODO: implement the call in PostgresSSHTest & test if works
+        Statement stment; ResultSet rset; String check;
 
+        try {
+            stment = conn.createStatement();
+
+            //Query the given follows tuple
+            rset = stment.executeQuery("" +
+                    "select following from follows where follower = '" + local_email + "' and " +
+                    "following = '" + other_email + "'");
+
+            check = rset.getString("following");
+        }
+        catch(SQLException sqle){
+            System.out.println("SQLException: " +sqle);
+            return;
+        }
+
+        //Check if the follows tuple exists
+        if(check.equals(other_email)){
+            try {
+                stment.executeUpdate("" +
+                        "delete from follows where follower = '" + local_email + "' and " +
+                        "following = '" + other_email + "'");
+            }
+            catch(SQLException sqle){
+                System.out.println("Could not delete tuple: " +sqle);
+            }
+        }
+        else{
+            System.out.println("You are currently not following " + check + ".");
+        }
+
+        try{ stment.close(); }
+        catch(SQLException sqle){ System.out.println("SQLException: " +sqle); }
     }
 }
