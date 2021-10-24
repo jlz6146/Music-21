@@ -1,14 +1,15 @@
 import com.jcraft.jsch.*;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.sql.*;
+import java.util.Arrays;
 import java.util.Properties;
+import java.util.Scanner;
 
 public class PostgresSSHTest {
 
     public static void main(String[] args) throws SQLException {
-
         int lport = 5432;
         String rhost = "starbug.cs.rit.edu";
         int rport = 5432;
@@ -44,7 +45,17 @@ public class PostgresSSHTest {
             conn = DriverManager.getConnection(url, props);
             System.out.println("Database connection established");
 
-            // Do something with the database....
+            PreparedStatement pStmt = conn.prepareStatement("insert into genre values(?)");
+            Scanner scanner = new Scanner(new File("SampleData/artists-songs-albums-tags.csv"));
+            while (scanner.hasNextLine()) {
+                String[] row = scanner.nextLine().split(",");
+                try {
+                    pStmt.setString(1, row[3].substring(0, row[3].length() - 1));
+                    pStmt.executeUpdate();
+                } catch (SQLException sqle) {
+                    System.out.println("Couldn't add tuple");
+                }
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
