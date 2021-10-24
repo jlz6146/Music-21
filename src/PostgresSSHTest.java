@@ -63,7 +63,7 @@ public class PostgresSSHTest {
                 valid = true;
 
                 // Do something with the database....
-                Main.main(args);
+                //Main.main(args);
 
             } catch (Exception e) {
                 System.out.println("The user or password input is incorrect.");
