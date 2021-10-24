@@ -20,8 +20,8 @@ public class PostgresSSHTest1 {
         Connection conn = null;
         Session session = null;
 
-        String adminUser = "jlz6146";
-        String adminPass = "Rochester404@";
+        String adminUser = "help girl";
+        String adminPass = "i am drifting out to sea";
 
         //String logInQuery = "select userName from User" + " where userName == " + userName;
         //String user = "user"; //change to your username
@@ -59,7 +59,8 @@ public class PostgresSSHTest1 {
             e.printStackTrace();
         }
 
-        LogIn.logMeIn(conn);
+        LogIn.signMeUp(conn);
+        //LogIn.logMeIn(conn);
 
         if (conn != null && !conn.isClosed()) {
             System.out.println("Closing Database Connection");
