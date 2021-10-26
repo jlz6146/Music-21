@@ -45,17 +45,26 @@ public class PostgresSSHTest {
             conn = DriverManager.getConnection(url, props);
             System.out.println("Database connection established");
 
-            PreparedStatement pStmt = conn.prepareStatement("insert into genre values(?)");
+            // Putting in all song info
+            /*PreparedStatement pStmt = conn.prepareStatement("insert into song values(?,?,?,?,?,?)");
             Scanner scanner = new Scanner(new File("SampleData/artists-songs-albums-tags.csv"));
+            int i = 1;
             while (scanner.hasNextLine()) {
                 String[] row = scanner.nextLine().split(",");
                 try {
-                    pStmt.setString(1, row[3].substring(0, row[3].length() - 1));
+                    pStmt.setInt(1, i);
+                    pStmt.setString(2, row[1]);
+                    pStmt.setString(3, row[3].substring(0, row[3].length() - 1));
+                    pStmt.setString(4, row[0].toLowerCase());
+                    pStmt.setTime(5, songLength());
+                    pStmt.setDate(6, releaseDate());
+
                     pStmt.executeUpdate();
+                    i++;
                 } catch (SQLException sqle) {
-                    System.out.println("Couldn't add tuple");
+                    System.out.println("Couldn't add tuple: " + sqle);
                 }
-            }
+            }*/
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -69,5 +78,30 @@ public class PostgresSSHTest {
                 session.disconnect();
             }
         }
+    }
+
+    private static int randomInRange(int min, int max) {
+        int range = (max - min) + 1;
+        return (int)(Math.random() * range) + min;
+    }
+
+    private static Time songLength() {
+        int mins = randomInRange(1, 4);
+        int secs = randomInRange(0, 59);
+        String timeString = String.format("00:0%d:%02d", mins, secs);
+        return Time.valueOf(timeString);
+    }
+
+    private static Date releaseDate() {
+        int month = randomInRange(1, 12);
+        int day = 0;
+        switch (month) {
+            case 1, 3, 5, 8, 10, 12 -> day = randomInRange(1, 31);
+            case 2 -> day = randomInRange(1, 28);
+            case 4, 6, 7, 9, 11 -> day = randomInRange(1, 30);
+        }
+        int year = randomInRange(1980, 2020);
+        String dateString = String.format("%d-%02d-%02d", year, month, day);
+        return Date.valueOf(dateString);
     }
 }
