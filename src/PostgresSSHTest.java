@@ -45,7 +45,29 @@ public class PostgresSSHTest {
             conn = DriverManager.getConnection(url, props);
             System.out.println("Database connection established");
 
-            Scanner scanner = new Scanner(new File("SampleData/artists-songs-albums-tags.csv"));
+
+
+            // Filling in album genre table
+            /*Scanner scanner = new Scanner(new File("SampleData/artists-songs-albums-tags.csv"));
+            PreparedStatement pStmt = conn.prepareStatement("select album_id from album where album_name = ?");
+            PreparedStatement pStmt2 = conn.prepareStatement("insert into album_genre values(?, ?)");
+            while (scanner.hasNextLine()) {
+                String[] row = scanner.nextLine().split(",");
+                pStmt.setString(1, row[2]);
+                ResultSet rSet = pStmt.executeQuery();
+                rSet.next();
+                int albumID = rSet.getInt(1);
+                try {
+                    pStmt2.setInt(1, albumID);
+                    pStmt2.setString(2, row[3].substring(0, row[3].length() - 1));
+                    pStmt2.executeUpdate();
+                } catch (SQLException sqle) {
+                    System.out.println("Couldn't add tuple: " + sqle);
+                }
+            }*/
+
+            // Putting in album info
+            /*Scanner scanner = new Scanner(new File("SampleData/artists-songs-albums-tags.csv"));
             HashMap<String, Date> albums = new HashMap<>();
             PreparedStatement pStmt = conn.prepareStatement("select release_date from song where title = ?");
 
@@ -99,11 +121,6 @@ public class PostgresSSHTest {
                 i++;
             }
 
-            /*for (int j = 0; j < albumData.length; j++) {
-                System.out.println("The Album (" + albumData[j][1] + ") released on: " + albumData[j][2]);
-                System.out.println("   Was Made By: " + albumData[j][0]);
-            }*/
-
             PreparedStatement pStmt2 = conn.prepareStatement("insert into album values(?, ?, ?, ?)");
             for (int j = 0; j < albumData.length; j++) {
                 try {
@@ -115,7 +132,7 @@ public class PostgresSSHTest {
                 } catch (SQLException sqle) {
                     System.out.println("Couldn't add tuple: " + sqle);
                 }
-            }
+            }*/
 
             // Putting in all song info
             /* PreparedStatement pStmt = conn.prepareStatement("insert into song values(?,?,?,?,?,?)");
