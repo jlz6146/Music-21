@@ -44,8 +44,11 @@ public class PostgresSSHTest {
             conn = DriverManager.getConnection(url, props);
             System.out.println("Database connection established");
 
-            // Do something with the database....
-            AccountCommands.play_song(conn, "just lose it");
+
+            // TODO: Figure out how getting input/how username of user is stored
+
+            // Allows user to play a specific song
+//            AccountCommands.play_song(conn, "hello", 373);
 
         } catch (Exception e) {
             e.printStackTrace();
