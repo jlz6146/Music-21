@@ -45,7 +45,42 @@ public class PostgresSSHTest {
             conn = DriverManager.getConnection(url, props);
             System.out.println("Database connection established");
 
+            // Filling in album songs table
+            /*HashMap<String, HashSet<String>> albums = new HashMap<>();
+            Scanner scanner = new Scanner(new File("SampleData/artists-songs-albums-tags.csv"));
+            while (scanner.hasNextLine()) {
+                String[] row = scanner.nextLine().split(",");
+                if (!albums.containsKey(row[2])) {
+                    albums.put(row[2], new HashSet<>());
+                }
+                albums.get(row[2]).add(row[0].toLowerCase());
+            }
 
+            PreparedStatement pStmt = conn.prepareStatement("select album_id from album where album_name = ?");
+            PreparedStatement pStmt2 = conn.prepareStatement("select song_id from song where title = ?");
+            PreparedStatement pStmt3 = conn.prepareStatement("insert into album_songs values(?, ?, ?)");
+            for (String a : albums.keySet()) {
+                pStmt.setString(1, a);
+                ResultSet rSet = pStmt.executeQuery();
+                rSet.next();
+                int albumID = rSet.getInt(1);
+                int trackNumber = 1;
+                for (String s : albums.get(a)) {
+                    pStmt2.setString(1, s);
+                    ResultSet rSet2 = pStmt2.executeQuery();
+                    rSet2.next();
+                    int songID = rSet2.getInt(1);
+                    try {
+                        pStmt3.setInt(1, albumID);
+                        pStmt3.setInt(2, songID);
+                        pStmt3.setInt(3, trackNumber);
+                        pStmt3.executeUpdate();
+                        trackNumber++;
+                    } catch (SQLException sqle) {
+                        System.out.println("Couldn't add tuple: " + sqle);
+                    }
+                }
+            }*/
 
             // Filling in album genre table
             /*Scanner scanner = new Scanner(new File("SampleData/artists-songs-albums-tags.csv"));
