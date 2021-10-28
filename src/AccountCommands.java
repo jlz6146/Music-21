@@ -1,6 +1,10 @@
 import java.sql.*;
 
 public class AccountCommands {
+    public static void play_collection(Connection conn, String username, int collectionID) {
+
+    }
+
     public static void play_song(Connection conn, String username, int songID) {
         PreparedStatement pStmt; ResultSet rSet;
         try {
