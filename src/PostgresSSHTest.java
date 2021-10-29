@@ -12,8 +12,8 @@ public class PostgresSSHTest {
         int lport = 5432;
         String rhost = "starbug.cs.rit.edu";
         int rport = 5432;
-        String user = "args[0]"; //change to your username
-        String password = "args[1]"; //change to your password
+        String user = args[0]; //change to your username
+        String password = args[1]; //change to your password
         String databaseName = "p320_01"; //change to your database name
 
         String driverName = "org.postgresql.Driver";
@@ -45,6 +45,7 @@ public class PostgresSSHTest {
             System.out.println("Database connection established");
 
             // Do something with the database....
+           // AccountCommands.show_collections(conn, "foo");
 
         } catch (Exception e) {
             e.printStackTrace();

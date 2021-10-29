@@ -15,12 +15,12 @@ public class AccountCommands {
             rSet = pStmt.executeQuery();
             while(rSet.next()){
                 String collection_name = rSet.getString("collection_name");
-                int duration, songs;
-                int[] arr = getSongInfo(conn, rSet.getInt("collection_id"));
-                duration = arr[0];
-                songs = arr[1];
+                int songs;
+                String dur;
+                songs = getSongInfo(conn, rSet.getInt("collection_id"));
+                dur = getCount(conn, rSet.getInt("collection_id"), songs);
 
-                System.out.println("Name: " + collection_name + "No. Songs: " + songs + "Duration: " + duration);
+                System.out.println("Name: " + collection_name + " | No.Songs: " + songs + " | Duration: " + dur);
             }
 
         } catch (SQLException sqle) {
@@ -29,10 +29,12 @@ public class AccountCommands {
 
     }
 
-    public static int[] getSongInfo(Connection conn, int collection_id){
+    /**
+     * helper function for show_collections. Gathers number of songs in a collection given a collection id.
+     */
+    public static int getSongInfo(Connection conn, int collection_id){
         PreparedStatement pStmt; ResultSet rSet;
-        int dur = 0, songs = 0;
-        int[] arr = new int[2];
+        int songs = 0;
         try{
             pStmt = conn.prepareStatement("Select length from song inner join collection_songs " +
                     "on song.song_id = collection_songs.song_id " +
@@ -40,19 +42,37 @@ public class AccountCommands {
             pStmt.setInt(1,collection_id);
             rSet = pStmt.executeQuery();
             while(rSet.next()){
-                dur += rSet.getInt("length");
                 songs++;
             }
 
         } catch (SQLException sqle) {
-            System.out.println("SQLExepction: " + sqle);
+            System.out.println("SQLException: " + sqle);
         }
-        arr[0] = dur;
-        arr[1] = songs;
-
-        return arr;
+        return songs;
     }
 
+    /**
+     * helper function for show_collections. Counts up the duration of all songs in a collection,
+     * given a collection id.
+     */
+    public static String getCount(Connection conn, int collection_id, int songs){
+        PreparedStatement pStmt; ResultSet rSet;
+        if(songs==0){
+            return "00:00:00";
+        }
+        try{
+            pStmt = conn.prepareStatement("select sum(song.length) as runtime from collection_songs " +
+                    "inner join song on song.song_id = collection_songs.song_id " +
+                    "where collection_id = ?");
+            pStmt.setInt(1,collection_id);
+            rSet = pStmt.executeQuery();
+            rSet.next();
+            return rSet.getString("runtime");
+        } catch (SQLException sqle) {
+            System.out.println("SQLException: " + sqle);
+        }
+        return "error getting count";
+    }
 
     /**
     public static void add_songs(Connection conn, String collection_name, int songID, int albumID){
