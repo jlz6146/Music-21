@@ -1,10 +1,48 @@
 import java.sql.*;
 
 public class AccountCommands {
-    public static void play_collection(Connection conn, String username, int collectionID) {
 
+    /**
+     * Plays an entire collection of songs
+     * @param conn a connection to the database storing all necessary data
+     * @param username the username of the current user
+     * @param collectionID the collection that the user wants to play
+     */
+    public static void play_collection(Connection conn, String username, int collectionID) {
+        PreparedStatement pStmt; ResultSet rSet;
+        try {
+            // First get all the songs that are in the collection specified
+            pStmt = conn.prepareStatement(
+                    "select c_s.song_id from collection as c, collection_songs as c_s where c.username = c_s.username and c.collection_id = c_s.collection_id and c.username = ? and c.collection_id = ?");
+            pStmt.setString(1, username);
+            pStmt.setInt(2, collectionID);
+
+            rSet = pStmt.executeQuery();
+
+            // If there are no rows in the set, do not do anything and display an error message
+            if (!rSet.next()) {
+                System.out.println("The Collection provided either has no songs or is invalid.");
+                System.out.println("Please retry with a valid Collection ID.");
+            // Otherwise, get each songID in the collection and play it
+            } else {
+                int songID;
+                do {
+                    songID = rSet.getInt(1);
+                    play_song(conn, username, songID);
+                } while (rSet.next());
+            }
+
+        } catch (SQLException sqle) {
+            System.out.println("SQLException: " + sqle);
+        }
     }
 
+    /**
+     * Plays any specific song
+     * @param conn a connection to the database storing all necessary data
+     * @param username the username of the current user
+     * @param songID the song that the user wants to play
+     */
     public static void play_song(Connection conn, String username, int songID) {
         PreparedStatement pStmt; ResultSet rSet;
         try {
@@ -28,6 +66,12 @@ public class AccountCommands {
         }
     }
 
+    /**
+     * Add a new relation between a user and a song if it is the first time they have played it
+     * @param conn a connection to the database storing all necessary data
+     * @param username the username of the current user
+     * @param songID the song that the user wants to play
+     */
     private static void add_row(Connection conn, String username, int songID) {
         PreparedStatement pStmt;
         try {
@@ -47,6 +91,12 @@ public class AccountCommands {
         }
     }
 
+    /**
+     * Add a single play to the song played by the user
+     * @param conn a connection to the database storing all necessary data
+     * @param username the username of the current user
+     * @param songID the song that the user wants to play
+     */
     private static void update_play_count(Connection conn, String username, int songID) {
         PreparedStatement pStmt;
         try {

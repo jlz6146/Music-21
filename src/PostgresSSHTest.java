@@ -49,6 +49,7 @@ public class PostgresSSHTest {
 
             // Allows user to play a specific song
 //            AccountCommands.play_song(conn, "hello", 373);
+//            AccountCommands.play_collection(conn, "foo", 2);
 
         } catch (Exception e) {
             e.printStackTrace();
