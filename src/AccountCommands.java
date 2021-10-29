@@ -47,10 +47,11 @@ public class AccountCommands {
         }
 
         //Check if user exists under given email
-        if(check.equals(other_email)){
+        if(check != null){
             try {
                 stment.executeUpdate("" +
-                        "insert into follows values('" + local_email + "', '" + other_email + "')");
+                        "insert into follows (follower, following) " +
+                        "values('" + local_email + "', '" + other_email + "')");
             }
             catch(SQLException sqle){
                 System.out.println("Could not insert tuple. " +sqle);
@@ -121,7 +122,7 @@ public class AccountCommands {
             if(rset == null){ col_id = 1; }
             else{ col_id = Integer.parseInt(rset.getString("collection_id")) + 1; }
             stment.executeUpdate("" +
-                    "insert into collection values('" + username + "', '" + coll_name + "'. '" + col_id + "')");
+                    "insert into collection (username, collection_id, collection_name) values('" + username + "', '" + col_id + "'. '" + coll_name + "')");
 
         }
         catch(SQLException sqle){
