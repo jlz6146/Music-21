@@ -37,7 +37,7 @@ public class AccountCommands {
 
             //Query if a user holds the given email
             rset = stment.executeQuery("" +
-                    "select email from users where email = 'other_email'");
+                    "select email from users where email = '" + other_email + "'");
 
             check = rset.getString("email");
         }
@@ -107,5 +107,25 @@ public class AccountCommands {
 
         try{ stment.close(); }
         catch(SQLException sqle){ System.out.println("SQLException: " +sqle); }
+    }
+
+    public static void create_collection(Connection conn, String username, String coll_name){
+        //TODO: implement the call in PostgresSSHTest & test if works
+        Statement stment; ResultSet rset; int col_id;
+
+        try{
+            stment = conn.createStatement();
+
+            rset = stment.executeQuery("" +
+                    "select MAX(collection_id) from collection");
+            if(rset == null){ col_id = 1; }
+            else{ col_id = Integer.parseInt(rset.getString("collection_id")) + 1; }
+            stment.executeUpdate("" +
+                    "insert into collection values('" + username + "', '" + coll_name + "'. '" + col_id + "')");
+
+        }
+        catch(SQLException sqle){
+            System.out.println("Could not create collection: " +sqle);
+        }
     }
 }
