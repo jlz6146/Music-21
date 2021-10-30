@@ -95,16 +95,16 @@ public class AccountCommands {
         PreparedStatement pStmt; ResultSet rSet;
         if(isAlbum){    // need to add entire album to the collection (ID is album_id)
             try{
-                pStmt = conn.prepareStatement("select album_id, song_id from album_songs" +
-                        "w here album_id = ?");
+                pStmt = conn.prepareStatement("select album_id, song_id from album_songs " +
+                        "where album_id = ?");
                 pStmt.setInt(1,ID);
                 rSet = pStmt.executeQuery();
                 while(rSet.next()){
                     pStmt = conn.prepareStatement("insert into collection_songs (username, collection_id, " +
-                            "song_id) values(?, ?, ?");
+                            "song_id) values(?, ?, ?)");
                     pStmt.setString(1,username);
                     pStmt.setInt(2,collection_id);
-                    pStmt.setInt(3,ID);
+                    pStmt.setInt(3,rSet.getInt("song_id"));
                     pStmt.executeUpdate();
                 }
             } catch (SQLException sqle) {
@@ -113,8 +113,8 @@ public class AccountCommands {
         }
         else{    // only need to add one song to the collection (ID is song_id)
             try{
-                pStmt = conn.prepareStatement("insert into collection_songs (username, collection_id, song_id)" +
-                        " values(?, ?, ?");
+                pStmt = conn.prepareStatement("insert into collection_songs (username, collection_id, song_id) " +
+                        "values(?, ?, ?)");
                 pStmt.setString(1,username);
                 pStmt.setInt(2,collection_id);
                 pStmt.setInt(3,ID);
@@ -138,8 +138,8 @@ public class AccountCommands {
         PreparedStatement pStmt; ResultSet rSet;
         if(isAlbum){    // need to delete entire album from the collection (ID is album_id)
             try{
-                pStmt = conn.prepareStatement("select album_id, song_id from album_songs" +
-                        "w here album_id = ?");
+                pStmt = conn.prepareStatement("select album_id, song_id from album_songs " +
+                        "where album_id = ?");
                 pStmt.setInt(1,ID);
                 rSet = pStmt.executeQuery();
                 while(rSet.next()){
@@ -147,7 +147,7 @@ public class AccountCommands {
                             "where username = ? and collection_id = ? and song_id = ?");
                     pStmt.setString(1,username);
                     pStmt.setInt(2,collection_id);
-                    pStmt.setInt(3,ID);
+                    pStmt.setInt(3,rSet.getInt("song_id"));
                     pStmt.executeUpdate();
                 }
             } catch (SQLException sqle) {

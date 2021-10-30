@@ -45,7 +45,6 @@ public class PostgresSSHTest {
             System.out.println("Database connection established");
 
             // Do something with the database....
-           // AccountCommands.show_collections(conn, "foo");
 
         } catch (Exception e) {
             e.printStackTrace();
