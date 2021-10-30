@@ -30,7 +30,7 @@ public class AccountCommands {
      */
     public static void follow(Connection conn, String local_email, String other_email){
         //TODO: implement the call in PostgresSSHTest
-        ResultSet rset; PreparedStatement stment; String check;
+        ResultSet rset; PreparedStatement stment; boolean exists;
 
         try {
             stment = conn.prepareStatement("select email from users where email = ?");
@@ -39,8 +39,7 @@ public class AccountCommands {
             //Query if a user holds the given email
             rset = stment.executeQuery();
 
-            rset.next();
-            check = rset.getString("email");
+            exists = rset.next();
         }
         catch(SQLException sqle){
             System.out.println("SQLException: " +sqle);
@@ -48,7 +47,7 @@ public class AccountCommands {
         }
 
         //Check if user exists under given email
-        if(check != null){
+        if(exists){
             try {
                 stment = conn.prepareStatement("insert into follows (follower, following) values(?, ?)");
                 stment.setString(1, local_email);
@@ -78,7 +77,7 @@ public class AccountCommands {
      */
     public static void unfollow(Connection conn, String local_email, String other_email){
         //TODO: implement the call in PostgresSSHTest
-        PreparedStatement stment; ResultSet rset; String check;
+        PreparedStatement stment; ResultSet rset; boolean exists;
 
         try {
             stment = conn.prepareStatement("select following from follows where follower = ? and following = ?");
@@ -88,8 +87,7 @@ public class AccountCommands {
             //Query the given follows tuple
             rset = stment.executeQuery();
 
-            rset.next();
-            check = rset.getString("following");
+            exists = rset.next();
         }
         catch(SQLException sqle){
             System.out.println("SQLException: " +sqle);
@@ -97,7 +95,7 @@ public class AccountCommands {
         }
 
         //Check if the follows tuple exists
-        if(check != null){
+        if(exists){
             try {
                 stment = conn.prepareStatement("delete from follows where follower = ? and following = ?");
                 stment.setString(1, local_email);
@@ -156,7 +154,7 @@ public class AccountCommands {
 
     public static void change_collection_name(Connection conn, String username, int coll_id, String new_name){
         //TODO: implement the call in PostgresSSHTest
-        PreparedStatement stment; ResultSet rset; int check;
+        PreparedStatement stment; ResultSet rset; boolean exists;
 
         try{
             stment = conn.prepareStatement("select collection_id from collection where username = ? and collection_id = ?");
@@ -165,15 +163,14 @@ public class AccountCommands {
 
             rset = stment.executeQuery();
 
-            rset.next();
-            check = rset.getInt("collection_id");
+            exists = rset.next();
         }
         catch(SQLException sqle){
             System.out.println("SQLException: " +sqle);
             return;
         }
 
-        if(check > 0){
+        if(exists){
             try{
                 stment = conn.prepareStatement("update collection set collection_name = ? where username = ? and collection_id = ?");
                 stment.setString(1, new_name);
