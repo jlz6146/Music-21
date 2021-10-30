@@ -13,7 +13,7 @@ public class PostgresSSHTest {
         String rhost = "starbug.cs.rit.edu";
         int rport = 5432;
         String user = "jlz6146"; //change to your username
-        String password = "Rochester404@"; //change to your password
+        String password = "it is 3:32 in the AM"; //change to your password
         String databaseName = "p320_01"; //change to your database name
 
         String driverName = "org.postgresql.Driver";
