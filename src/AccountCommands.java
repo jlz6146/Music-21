@@ -13,7 +13,7 @@ public class AccountCommands {
                 "!create_collection [name] ..." +
                 "!add_to_collection [name] [song/album] ..." +
                 "!delete_collection [name] ..." +
-                "!change_collection_name [old_name] [new_name] ..." +
+                "!change_collection_name [id] [old_name] [new_name] ..." +
                 "" +
                 "" +
                 "" +
@@ -121,7 +121,8 @@ public class AccountCommands {
         PreparedStatement stment; ResultSet rset; int coll_id; int max_id;
 
         try {
-            stment = conn.prepareStatement("select MAX(collection_id) from collection");
+            stment = conn.prepareStatement("select MAX(collection_id) from collection where username = ?");
+            stment.setString(1, username);
             rset = stment.executeQuery();
 
             max_id = rset.getInt("max");
@@ -140,10 +141,49 @@ public class AccountCommands {
             stment.setString(3, coll_name);
 
             stment.executeUpdate();
-            System.out.println("Collection: " + coll_name + " has been created.");
+            System.out.println("Collection: " + coll_name + " has been created with id: " + coll_id + ".");
         }
         catch(SQLException sqle){
             System.out.println("Could not create collection: " +sqle);
+        }
+
+        try{ stment.close(); }
+        catch(SQLException sqle){ System.out.println("SQLException: " +sqle); }
+    }
+
+    public static void change_collection_name(Connection conn, String username, int coll_id, String new_name){
+        //TODO: implement the call in PostgresSSHTest
+        PreparedStatement stment; ResultSet rset; int check;
+
+        try{
+            stment = conn.prepareStatement("select collection_id from collection where username = ? and collection_id = ?");
+            stment.setString(1, username);
+            stment.setInt(2, coll_id);
+
+            rset = stment.executeQuery();
+            check = rset.getInt("collection_id");
+        }
+        catch(SQLException sqle){
+            System.out.println("SQLException: " +sqle);
+            return;
+        }
+
+        if(check > 0){
+            try{
+                stment = conn.prepareStatement("update collection set collection_name = ? where username = ? and collection_id = ?");
+                stment.setString(1, new_name);
+                stment.setString(2, username);
+                stment.setInt(3, coll_id);
+
+                stment.executeUpdate();
+                System.out.println("The given collection has been updated with the name: " + new_name + ".");
+            }
+            catch (SQLException sqle){
+                System.out.println("Could not modify the name of this collection: " +sqle);
+            }
+        }
+        else{
+            System.out.println("You have not created a collection with id " + coll_id + ".");
         }
 
         try{ stment.close(); }
