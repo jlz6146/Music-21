@@ -29,15 +29,15 @@ public class AccountCommands {
      * @param other_email - the email of the person to be followed
      */
     public static void follow(Connection conn, String local_email, String other_email){
-        //TODO: implement the call in PostgresSSHTest & test if works
-        ResultSet rset; Statement stment; String check;
+        //TODO: implement the call in PostgresSSHTest
+        ResultSet rset; PreparedStatement stment; String check;
 
         try {
-            stment = conn.createStatement();
+            stment = conn.prepareStatement("select email from users where email = ?");
+            stment.setString(1, other_email);
 
             //Query if a user holds the given email
-            rset = stment.executeQuery("" +
-                    "select email from users where email = '" + other_email + "'");
+            rset = stment.executeQuery();
 
             check = rset.getString("email");
         }
@@ -49,9 +49,12 @@ public class AccountCommands {
         //Check if user exists under given email
         if(check != null){
             try {
-                stment.executeUpdate("" +
-                        "insert into follows (follower, following) " +
-                        "values('" + local_email + "', '" + other_email + "')");
+                stment = conn.prepareStatement("insert into follows (follower, following) " +
+                        "values(?, ?)");
+                stment.setString(1, local_email);
+                stment.setString(2, other_email);
+
+                stment.executeUpdate();
             }
             catch(SQLException sqle){
                 System.out.println("Could not insert tuple. " +sqle);
