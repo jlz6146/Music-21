@@ -49,12 +49,12 @@ public class AccountCommands {
         //Check if user exists under given email
         if(check != null){
             try {
-                stment = conn.prepareStatement("insert into follows (follower, following) " +
-                        "values(?, ?)");
+                stment = conn.prepareStatement("insert into follows (follower, following) values(?, ?)");
                 stment.setString(1, local_email);
                 stment.setString(2, other_email);
 
                 stment.executeUpdate();
+                System.out.println("You are now following: " +other_email);
             }
             catch(SQLException sqle){
                 System.out.println("Could not insert tuple. " +sqle);
@@ -76,16 +76,16 @@ public class AccountCommands {
      * @param other_email - the email of the person to be unfollowed
      */
     public static void unfollow(Connection conn, String local_email, String other_email){
-        //TODO: implement the call in PostgresSSHTest & test if works
-        Statement stment; ResultSet rset; String check;
+        //TODO: implement the call in PostgresSSHTest
+        PreparedStatement stment; ResultSet rset; String check;
 
         try {
-            stment = conn.createStatement();
+            stment = conn.prepareStatement("select following from follows where follower = ? and following = ?");
+            stment.setString(1, local_email);
+            stment.setString(2, other_email);
 
             //Query the given follows tuple
-            rset = stment.executeQuery("" +
-                    "select following from follows where follower = '" + local_email + "' and " +
-                    "following = '" + other_email + "'");
+            rset = stment.executeQuery();
 
             check = rset.getString("following");
         }
@@ -95,11 +95,14 @@ public class AccountCommands {
         }
 
         //Check if the follows tuple exists
-        if(check.equals(other_email)){
+        if(check != null){
             try {
-                stment.executeUpdate("" +
-                        "delete from follows where follower = '" + local_email + "' and " +
-                        "following = '" + other_email + "'");
+                stment = conn.prepareStatement("delete from follows where follower = ? and following = ?");
+                stment.setString(1, local_email);
+                stment.setString(2, other_email);
+
+                stment.executeUpdate();
+                System.out.println("You unfollowed: " +other_email);
             }
             catch(SQLException sqle){
                 System.out.println("Could not delete tuple: " +sqle);
