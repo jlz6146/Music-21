@@ -39,6 +39,7 @@ public class AccountCommands {
             //Query if a user holds the given email
             rset = stment.executeQuery();
 
+            rset.next();
             check = rset.getString("email");
         }
         catch(SQLException sqle){
@@ -87,6 +88,7 @@ public class AccountCommands {
             //Query the given follows tuple
             rset = stment.executeQuery();
 
+            rset.next();
             check = rset.getString("following");
         }
         catch(SQLException sqle){
@@ -125,6 +127,7 @@ public class AccountCommands {
             stment.setString(1, username);
             rset = stment.executeQuery();
 
+            rset.next();
             max_id = rset.getInt("max");
         }
         catch(SQLException sqle){
@@ -161,6 +164,8 @@ public class AccountCommands {
             stment.setInt(2, coll_id);
 
             rset = stment.executeQuery();
+
+            rset.next();
             check = rset.getInt("collection_id");
         }
         catch(SQLException sqle){
