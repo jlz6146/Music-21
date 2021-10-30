@@ -1,12 +1,5 @@
-import javax.xml.transform.Result;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.*;
-import java.util.Locale;
 import java.util.Scanner;
-
-import java.time.format.DateTimeFormatter;
-import java.time.LocalDate;
 
 public class SearchBy {
 
