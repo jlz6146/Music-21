@@ -60,7 +60,7 @@ public class DatabaseConnection {
                 case "!change_collection_name" -> AccountCommands.change_collection_name(conn, username, Integer.parseInt(args[1]), args[2]);
                 case "!show_collections" -> AccountCommands.show_collections(conn, username);
                 case "!add_songs" -> AccountCommands.add_songs(conn, username, Integer.parseInt(args[1]), Integer.parseInt(args[2]), Boolean.parseBoolean(args[3]));
-                case "!delete_collection" -> AccountCommands.delete_collection(conn, user, Integer.parseInt(args[1]));
+                case "!delete_collection" -> AccountCommands.delete_collection(conn, username, Integer.parseInt(args[1]));
                 case "!delete_songs" -> AccountCommands.delete_songs(conn, username, Integer.parseInt(args[1]), Integer.parseInt(args[2]), Boolean.parseBoolean(args[3]));
                 case "!play_collection" -> AccountCommands.play_collection(conn, username, Integer.parseInt(args[1]));
                 case "!play_song" -> AccountCommands.play_song(conn, username, Integer.parseInt(args[1]));

@@ -360,14 +360,19 @@ public class AccountCommands {
                         "where album_id = ?");
                 pStmt.setInt(1,ID);
                 rSet = pStmt.executeQuery();
-                while(rSet.next()){
-                    pStmt = conn.prepareStatement("insert into collection_songs (username, collection_id, " +
-                            "song_id) values(?, ?, ?)");
-                    pStmt.setString(1,username);
-                    pStmt.setInt(2,collection_id);
-                    pStmt.setInt(3,rSet.getInt("song_id"));
-                    pStmt.executeUpdate();
-                    pStmt.close();
+                if (!rSet.next()) {
+                    System.out.println("Please enter a valid Album ID");
+                } else {
+                    do {
+                        pStmt = conn.prepareStatement("insert into collection_songs (username, collection_id, " +
+                                "song_id) values(?, ?, ?)");
+                        pStmt.setString(1, username);
+                        pStmt.setInt(2, collection_id);
+                        pStmt.setInt(3, rSet.getInt("song_id"));
+                        pStmt.executeUpdate();
+                        pStmt.close();
+                    } while (rSet.next());
+                    System.out.println("Successfully added the album to the collection!");
                 }
             } catch (SQLException sqle) {
                 System.out.println("Either the album ID or collection ID was invalid");
@@ -382,7 +387,7 @@ public class AccountCommands {
                 pStmt.setInt(3,ID);
                 pStmt.executeUpdate();
                 pStmt.close();
-
+                System.out.println("Successfully added the song to the collection!");
             } catch (SQLException sqle) {
                 System.out.println("Either the song ID or collection ID was invalid");
             }
@@ -405,14 +410,19 @@ public class AccountCommands {
                         "where album_id = ?");
                 pStmt.setInt(1,ID);
                 rSet = pStmt.executeQuery();
-                while (rSet.next()) {
-                    pStmt = conn.prepareStatement("delete from collection_songs " +
-                            "where username = ? and collection_id = ? and song_id = ?");
-                    pStmt.setString(1,username);
-                    pStmt.setInt(2,collection_id);
-                    pStmt.setInt(3,rSet.getInt("song_id"));
-                    pStmt.executeUpdate();
-                    pStmt.close();
+                if (!rSet.next()) {
+                    System.out.println("Please enter a valid Album ID");
+                } else {
+                    do {
+                        pStmt = conn.prepareStatement("delete from collection_songs " +
+                                "where username = ? and collection_id = ? and song_id = ?");
+                        pStmt.setString(1, username);
+                        pStmt.setInt(2, collection_id);
+                        pStmt.setInt(3, rSet.getInt("song_id"));
+                        pStmt.executeUpdate();
+                        pStmt.close();
+                    } while (rSet.next());
+                    System.out.println("Successfully removed the album to the collection");
                 }
             } catch (SQLException sqle) {
                 System.out.println("Please enter a valid Album ID");
@@ -427,7 +437,7 @@ public class AccountCommands {
                 pStmt.setInt(3,ID);
                 pStmt.executeUpdate();
                 pStmt.close();
-
+                System.out.println("Successfully removed the song to the collection");
             } catch (SQLException sqle) {
                 System.out.println("Please enter a valid song ID");
             }
@@ -443,11 +453,11 @@ public class AccountCommands {
     public static void delete_collection(Connection conn, String username, int collectionID) {
         PreparedStatement pStmt;
         try {
-            pStmt = conn.prepareStatement("delete from collection_songs " +
-                    "where username = ? and collection_id = ?");
-            pStmt.setString(1, username);
-            pStmt.setInt(2, collectionID);
-            pStmt.executeUpdate();
+//            pStmt = conn.prepareStatement("delete from collection_songs " +
+//                    "where username = ? and collection_id = ?");
+//            pStmt.setString(1, username);
+//            pStmt.setInt(2, collectionID);
+//            pStmt.executeUpdate();
 
             pStmt = conn.prepareStatement("delete from collection " +
                     "where username = ? and collection_id = ?");
@@ -455,7 +465,7 @@ public class AccountCommands {
             pStmt.setInt(2, collectionID);
             pStmt.executeUpdate();
             pStmt.close();
-
+            System.out.println("Successfully removed the collection");
         } catch (SQLException sqle) {
             System.out.println("Please enter a valid collection ID");
         }
