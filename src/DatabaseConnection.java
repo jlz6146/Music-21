@@ -44,7 +44,7 @@ public class DatabaseConnection {
                 case "!login" -> username = Login.logMeIn(conn);
                 case "!signup" -> username = Login.signMeUp(conn);
                 case "!help" -> AccountCommands.help();
-                case "!search" -> SearchBy.Search(conn);
+                case "!search" -> SearchBy2.Search(conn);
                 case "!follow" -> AccountCommands.follow(conn, username, args[1]);
                 case "!unfollow" -> AccountCommands.unfollow(conn, username, args[1]);
                 case "!create_collection" -> AccountCommands.create_collection(conn, username, args[1]);
