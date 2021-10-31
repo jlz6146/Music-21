@@ -53,7 +53,7 @@ public class DatabaseConnection {
                 case "!signup" -> username = Login.signMeUp(conn);
                 case "!find_user" -> AccountCommands.find_user(conn, args[1]);
                 case "!help" -> AccountCommands.help();
-                case "!search" -> SearchBy2.Search(conn);
+                case "!search" -> SearchBy.Search(conn);
                 case "!follow" -> AccountCommands.follow(conn, username, args[1]);
                 case "!unfollow" -> AccountCommands.unfollow(conn, username, args[1]);
                 case "!create_collection" -> AccountCommands.create_collection(conn, username, args[1]);
