@@ -1,12 +1,8 @@
-import javax.xml.transform.Result;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.*;
-import java.util.Locale;
 import java.util.Scanner;
 
-import java.time.format.DateTimeFormatter;
-import java.time.LocalDate;
 
 public class SearchBy {
 
@@ -30,7 +26,7 @@ public class SearchBy {
     public static void Search(Connection conn) throws SQLException {
 
 
-            Boolean searchRunning = true;
+            boolean searchRunning = true;
 
             Statement stmt = conn.createStatement();
 
@@ -61,6 +57,7 @@ public class SearchBy {
                 System.out.println("reorder (reorder)     ||      search again (search)    ||      exit search (exit)");
                 String inNext = search.nextLine().replaceAll("[^A-Za-z]+ ", "").toLowerCase();
                 if (inNext.equals("search")) {
+                    searchRunning = false;
                     Search(conn);
                 }
                 else if (inNext.equals("exit")) {
