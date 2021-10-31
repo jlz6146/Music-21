@@ -3,6 +3,9 @@ import java.util.Scanner;
 
 public class SearchBy2 {
 
+    /**
+     * The different parameters a user can order their search by
+     */
     public enum OrderType {
         title ("song.title"),
         artist ("song.artist_name"),
@@ -17,9 +20,17 @@ public class SearchBy2 {
         }
     }
 
+    /**
+     * Allows the user to choose how their search results are ordered
+     */
     public enum OrderDirection { asc, desc }
     public static Scanner search = new Scanner(System.in);
 
+    /**
+     * Allows a user to easily search through songs in the database
+     * @param conn a connection to the database storing all necessary data
+     * @throws SQLException included in the off case there is a database access error
+     */
     public static void Search(Connection conn) throws SQLException {
         boolean searchRunning = true;
 

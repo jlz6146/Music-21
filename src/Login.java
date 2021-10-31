@@ -8,8 +8,13 @@ public class Login {
 
     public static Scanner Scan = new Scanner(System.in);
 
+    /**
+     * Allows a new user to create an account
+     * @param conn a connection to the database storing all necessary data
+     * @return the newly created username of the user accessing the database
+     * @throws SQLException included in the off case there is a database access error
+     */
     public static String signMeUp(Connection conn) throws SQLException {
-
         String userName = null, password = null, email = null, firstName = null, lastName = null;
         PreparedStatement pStmt = conn.prepareStatement("Select count(1) As number From users Where username = ?");
 
@@ -66,6 +71,12 @@ public class Login {
         return userName;
     }
 
+    /**
+     * Allows an existing user to login, maintaining any account info previously saved in the database
+     * @param conn a connection to the database storing all necessary data
+     * @return the existing username of the user accessing the database
+     * @throws SQLException included in the off case there is a database access error
+     */
     public static String logMeIn(Connection conn) throws SQLException{
         String user;
         while (true) {

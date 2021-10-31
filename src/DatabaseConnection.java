@@ -9,6 +9,14 @@ public class DatabaseConnection {
 
     public static String username;
 
+    /**
+     * Opens a brief connection to the database in order for any user commands to be processed
+     * @param user the RIT username of the user running the program
+     * @param password the RIT CS Password of the user running the program
+     * @param command the command requested by the user
+     * @param args any necessary arguments needed to run the command
+     * @throws SQLException included in the off case there is a database access error
+     */
     public static void runCommand(String user, String password, String command, String[] args) throws SQLException {
         int lport = 5432;
         String rhost = "starbug.cs.rit.edu";

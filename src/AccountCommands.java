@@ -22,7 +22,6 @@ public class AccountCommands {
                 !play_song [song ID]
                 !logout
                 """);
-
     }
 
     /**
@@ -435,6 +434,12 @@ public class AccountCommands {
         }
     }
 
+    /**
+     * Deletes a specified collection for a user
+     * @param conn a connection to the database storing all necessary data
+     * @param username the username of the current user
+     * @param collectionID a collection the user owns
+     */
     public static void delete_collection(Connection conn, String username, int collectionID) {
         PreparedStatement pStmt;
         try {
