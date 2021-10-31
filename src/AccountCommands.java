@@ -244,7 +244,8 @@ public class AccountCommands {
                     songs = getSongInfo(conn, rSet.getInt("collection_id"));
                     dur = getCount(conn, rSet.getInt("collection_id"), songs);
 
-                    System.out.println("Name: " + collection_name + " | No.Songs: " + songs + " | Duration: " + dur);
+                    System.out.println("Name: " + collection_name + "ID: " + rSet.getString("collection_id")
+                            + " | No.Songs: " + songs + " | Duration: " + dur);
                 } while (rSet.next());
 
                 pStmt.close();
