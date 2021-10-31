@@ -32,7 +32,6 @@ public class AccountCommands {
      * @param other_email - the email of the person to be followed
      */
     public static void follow(Connection conn, String username, String other_email){
-        //TODO: implement the call in PostgresSSHTest
         ResultSet rset; PreparedStatement stment; boolean exists;
         String local_email;
 
@@ -75,7 +74,7 @@ public class AccountCommands {
                 System.out.println("You are now following: " + other_email + ".");
             }
             catch(SQLException sqle){
-                System.out.println("Could not insert tuple. " +sqle);
+                System.out.println("You are already following " + other_email);
             }
         }
         else{
@@ -84,7 +83,7 @@ public class AccountCommands {
 
 
         try{ stment.close(); }
-        catch(SQLException sqle){ System.out.println("SQLException: " +sqle); }
+        catch(SQLException sqle){ System.out.println("SQLException: " + sqle); }
     }
 
     /**
@@ -94,7 +93,6 @@ public class AccountCommands {
      * @param other_email - the email of the person to be unfollowed
      */
     public static void unfollow(Connection conn, String username, String other_email){
-        //TODO: implement the call in PostgresSSHTest
         PreparedStatement stment; ResultSet rset; boolean exists;
         String local_email;
 
@@ -150,7 +148,6 @@ public class AccountCommands {
     }
 
     public static void create_collection(Connection conn, String username, String coll_name){
-        //TODO: implement the call in PostgresSSHTest
         PreparedStatement stment; ResultSet rset; int coll_id; int max_id;
 
         try {
@@ -186,7 +183,6 @@ public class AccountCommands {
     }
 
     public static void change_collection_name(Connection conn, String username, int coll_id, String new_name){
-        //TODO: implement the call in PostgresSSHTest
         PreparedStatement stment; ResultSet rset; boolean exists;
 
         try{
@@ -248,6 +244,8 @@ public class AccountCommands {
                 System.out.println("Name: " + collection_name + " | No.Songs: " + songs + " | Duration: " + dur);
             }
 
+            pStmt.close();
+
         } catch (SQLException sqle) {
             System.out.println("SQLExepction: " + sqle);
         }
@@ -273,8 +271,10 @@ public class AccountCommands {
                 songs++;
             }
 
+            pStmt.close();
+
         } catch (SQLException sqle) {
-            System.out.println("SQLException: " + sqle);
+            System.out.println("You do not have a collection with this ID");
         }
         return songs;
     }
@@ -299,6 +299,7 @@ public class AccountCommands {
             pStmt.setInt(1,collection_id);
             rSet = pStmt.executeQuery();
             rSet.next();
+            pStmt.close();
             return rSet.getString("runtime");
         } catch (SQLException sqle) {
             System.out.println("SQLException: " + sqle);
@@ -329,9 +330,10 @@ public class AccountCommands {
                     pStmt.setInt(2,collection_id);
                     pStmt.setInt(3,rSet.getInt("song_id"));
                     pStmt.executeUpdate();
+                    pStmt.close();
                 }
             } catch (SQLException sqle) {
-                System.out.println("SQLException: " + sqle);
+                System.out.println("Either the album ID or collection ID was invalid");
             }
         }
         else{    // only need to add one song to the collection (ID is song_id)
@@ -342,9 +344,10 @@ public class AccountCommands {
                 pStmt.setInt(2,collection_id);
                 pStmt.setInt(3,ID);
                 pStmt.executeUpdate();
+                pStmt.close();
 
             } catch (SQLException sqle) {
-                System.out.println("SQLException: " + sqle);
+                System.out.println("Either the song ID or collection ID was invalid");
             }
         }
     }
@@ -372,9 +375,10 @@ public class AccountCommands {
                     pStmt.setInt(2,collection_id);
                     pStmt.setInt(3,rSet.getInt("song_id"));
                     pStmt.executeUpdate();
+                    pStmt.close();
                 }
             } catch (SQLException sqle) {
-                System.out.println("SQLException: " + sqle);
+                System.out.println("Please enter a valid Album ID");
             }
         }
         else{    // only need to delete one song from the collection (ID is song_id)
@@ -385,9 +389,10 @@ public class AccountCommands {
                 pStmt.setInt(2,collection_id);
                 pStmt.setInt(3,ID);
                 pStmt.executeUpdate();
+                pStmt.close();
 
             } catch (SQLException sqle) {
-                System.out.println("SQLException: " + sqle);
+                System.out.println("Please enter a valid song ID");
             }
         }
     }
@@ -400,9 +405,10 @@ public class AccountCommands {
             pStmt.setString(1, username);
             pStmt.setInt(2, collectionID);
             pStmt.executeUpdate();
+            pStmt.close();
 
         } catch (SQLException sqle) {
-            System.out.println("SQLException: " + sqle);
+            System.out.println("Please enter a valid collection ID");
         }
     }
 
@@ -436,6 +442,7 @@ public class AccountCommands {
                     play_song(conn, username, songID);
                 } while (rSet.next());
             }
+            pStmt.close();
 
         } catch (SQLException sqle) {
             System.out.println("SQLException: " + sqle);
@@ -465,9 +472,10 @@ public class AccountCommands {
             } else {
                 update_play_count(conn, username, songID);
             }
+            pStmt.close();
 
         } catch (SQLException sqle) {
-            System.out.println("SQLException: " + sqle);
+            System.out.println("Please enter a valid song ID");
         }
     }
 
@@ -487,11 +495,10 @@ public class AccountCommands {
             pStmt.setInt(3, 1);
 
             pStmt.executeUpdate();
+            pStmt.close();
             // If a user is logged in, the only possible error at this point is that the song does not exist
             //    as the username should be validated upon logging in
         } catch (SQLException sqle) {
-            // TODO: remove first print statement when finished (just for testing)
-            System.out.println("SQLException: " + sqle);
             System.out.println("Please enter a valid songID.");
         }
     }
@@ -510,6 +517,7 @@ public class AccountCommands {
             pStmt.setInt(2, songID);
 
             pStmt.executeUpdate();
+            pStmt.close();
             // Should not be any errors at this step
         } catch (SQLException sqle) {
             System.out.println("SQLException: " + sqle);
