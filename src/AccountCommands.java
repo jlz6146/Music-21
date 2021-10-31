@@ -241,8 +241,8 @@ public class AccountCommands {
                     String collection_name = rSet.getString("collection_name");
                     int songs;
                     String dur;
-                    songs = getSongInfo(conn, rSet.getInt("collection_id"));
-                    dur = getCount(conn, rSet.getInt("collection_id"), songs);
+                    songs = getSongInfo(conn, username, rSet.getInt("collection_id"));
+                    dur = getCount(conn, username, rSet.getInt("collection_id"), songs);
 
                     System.out.println("Name: " + collection_name + "ID: " + rSet.getString("collection_id")
                             + " | No.Songs: " + songs + " | Duration: " + dur);
@@ -262,14 +262,15 @@ public class AccountCommands {
      * @param collection_id a collection the user wants to get song information from
      * @return an integer showing the number of songs in the collection
      */
-    private static int getSongInfo(Connection conn, int collection_id){
+    private static int getSongInfo(Connection conn, String username, int collection_id){
         PreparedStatement pStmt; ResultSet rSet;
         int songs = 0;
         try{
             pStmt = conn.prepareStatement("Select length from song inner join collection_songs " +
                     "on song.song_id = collection_songs.song_id " +
-                    "where collection_songs.collection_id = ?");
+                    "where collection_songs.collection_id = ? and username = ?");
             pStmt.setInt(1,collection_id);
+            pStmt.setString(2, username);
             rSet = pStmt.executeQuery();
             while(rSet.next()){
                 songs++;
@@ -291,7 +292,7 @@ public class AccountCommands {
      * @param songs an integer with the number of songs in the collection
      * @return a string showing the total runtime of the collection
      */
-    private static String getCount(Connection conn, int collection_id, int songs){
+    private static String getCount(Connection conn, String username, int collection_id, int songs){
         PreparedStatement pStmt; ResultSet rSet;
         if(songs==0){
             return "00:00:00";
@@ -299,8 +300,9 @@ public class AccountCommands {
         try{
             pStmt = conn.prepareStatement("select sum(song.length) as runtime from collection_songs " +
                     "inner join song on song.song_id = collection_songs.song_id " +
-                    "where collection_id = ?");
+                    "where collection_id = ? and username = ?");
             pStmt.setInt(1,collection_id);
+            pStmt.setString(2, username);
             rSet = pStmt.executeQuery();
             rSet.next();
             pStmt.close();
