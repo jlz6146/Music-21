@@ -32,17 +32,17 @@ public class AccountCommands {
      */
     public static void find_user(Connection conn, String email){
         try{
-            PreparedStatement pStat = conn.prepareStatement("select username email from users where email = ?");
+            PreparedStatement pStat = conn.prepareStatement("select username, email from users where email = ?");
             pStat.setString(1, email);
 
             ResultSet rs = pStat.executeQuery();
 
-            if(rs.next()){ System.out.println("Name: " +rs.getString("username")+ " | Email: " +rs.getString("email")); }
+            if(rs.next()){ System.out.println("Name: " + rs.getString("username")+ " | Email: " +rs.getString("email")); }
             else{ System.out.println(email + " is not attached to a user."); }
 
             pStat.close();
         }
-        catch(SQLException sqle){ System.out.println("SQLException: " +sqle); }
+        catch(SQLException sqle){ System.out.println("SQLException: " + sqle); }
     }
 
     /**
