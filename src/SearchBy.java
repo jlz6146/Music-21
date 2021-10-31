@@ -15,7 +15,7 @@ public class SearchBy {
         artist ("S.artist_name"),
         album ("A.album_name"),
         genre ("S.genre_name"),
-        year ("DATEPART('year', S.release_date)");
+        year ("S.release_date");
 
         public final String label;
 
@@ -47,7 +47,7 @@ public class SearchBy {
                         "inner join album_songs on album_songs.song_id = song.song_id " +
                         "inner join album on album_songs.album_id = album.album_id " +
                         "left join (select song_id, sum(user_play_count) as plays from user_play group by song_id) as u_p on u_p.song_id = song.song_id " +
-                        "Where (song.title like ? or song.artist_name like ? or song.genre_name like ? or album.album_name like ?) ";
+                        "Where (song.title like ? or song.artist_name like ? or song.genre_name like ? or album.album_name like ?) ");
 
             sQuery.setString(1, "%" + input.toLowerCase() + "%");
             sQuery.setString(2, "%" + input.toUpperCase() + "%");
@@ -99,8 +99,8 @@ public class SearchBy {
                         }
                     }
 
-                    //PreparedStatement orderQuery = conn.createStatement(sQuery + " Order By " + type + " " + dir);
-                    //rs = orderQuery.executeQuery();
+                    PreparedStatement orderQuery = conn.prepareStatement(sQuery + " Order By " + type + " " + dir);
+                    rs = orderQuery.executeQuery();
                     while (rs.next()) {
                         System.out.println(rs.getString("title") + " | " + rs.getString("artist_name") + " | " + rs.getString("album_name") + " | " + rs.getTime("length") + " | " + rs.getDate("release_date") + " | " + rs.getInt("plays"));
                     }
@@ -108,53 +108,5 @@ public class SearchBy {
             }
         }
 
-        /**
-        System.out.println("Order songs by: title | artist | album | genre | year");
-        String orderIn = search.nextLine().replaceAll("[^A-Za-z]+", "").toLowerCase();
-        System.out.println("asc | desc | null");
-        String ordering = search.nextLine().replaceAll("[^A-Za-z]+", "").toLowerCase();
-
-        rs = stmt.executeQuery(searchQuery + whereStmt + orderBy(orderIn, ordering));
-        if (rs.next()){
-            System.out.println(rs.getString("title") + " " + rs.getString("artist_name") + " " + rs.getString("album_name") + " " + rs.getTime("length"));
-        }
-         */
-
-
-
-   /* public static int totalListen(Statement stmt, int songID) throws SQLException {
-        String songQuery = "Select sum(user_play_count) as ListenCount from user_play Where song_id = '" + songID + "'";
-        ResultSet rs = stmt.executeQuery(songQuery);
-        if (rs.next()) {
-            return rs.getInt("ListenCount");
-        }
-        return -1;
-    }*/
-
-    public static String orderBy(String orderInput){
-        OrderType type = null;
-        OrderDirection dir = null;
-        String TypeString = "";
-        String[] input = orderInput.split(" ");
-        System.out.println(input[0]);
-        try { type = OrderType.valueOf(input[0]); }
-        catch(IllegalArgumentException E){
-        }
-
-        if ((type != null) || (input[1] != null)) {
-            TypeString = "Order By '" + type + "'";
-            try { dir = OrderDirection.valueOf(input[1]); }
-            catch (IllegalArgumentException F) {
-            }
-            catch (ArrayIndexOutOfBoundsException G){
-
-            }
-            if (dir != null) {
-                TypeString += " " + dir;
-            }
-        }
-        System.out.println(TypeString);
-        return TypeString;
-    }
 
 }
