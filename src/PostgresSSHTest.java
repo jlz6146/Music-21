@@ -62,7 +62,7 @@ public class PostgresSSHTest {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Please enter valid arguments!");
         } finally {
             if (conn != null && !conn.isClosed()) {
                 conn.close();

@@ -19,7 +19,7 @@ public class Main {
         arguments = command.split(" ");
         PostgresSSHTest.runCommand(user, pass, arguments[0], arguments);
 
-        while (!command.equals("!logout")) {
+        while (!command.trim().equals("!logout")) {
             System.out.println("What would you like to do? (Enter \"!help\" for list of commands)");
             command = scanner.nextLine();
             arguments = command.split(" ");
