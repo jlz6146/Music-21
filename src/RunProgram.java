@@ -1,7 +1,7 @@
 import java.sql.SQLException;
 import java.util.Scanner;
 
-public class Main {
+public class RunProgram {
 
     public static void main(String[] args) throws SQLException {
         // When running input your RIT Username and Password in as arguments
@@ -17,13 +17,13 @@ public class Main {
             command = scanner.nextLine();
         }
         arguments = command.split(" ");
-        PostgresSSHTest.runCommand(user, pass, arguments[0], arguments);
+        DatabaseConnection.runCommand(user, pass, arguments[0], arguments);
 
         while (!command.trim().equals("!logout")) {
             System.out.println("What would you like to do? (Enter \"!help\" for list of commands)");
             command = scanner.nextLine();
             arguments = command.split(" ");
-            PostgresSSHTest.runCommand(user, pass, arguments[0], arguments);
+            DatabaseConnection.runCommand(user, pass, arguments[0], arguments);
         }
     }
 }
