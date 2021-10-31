@@ -1,6 +1,29 @@
+import java.sql.SQLException;
+import java.util.Scanner;
+
 public class Main {
 
-    public static void main(String[] args) {
-	// write your code here
+    public static void main(String[] args) throws SQLException {
+        // When running input your RIT Username and Password in as arguments
+        String user = args[0];
+        String pass = args[1];
+
+        Scanner scanner = new Scanner(System.in);
+        String command = "";
+        String[] arguments;
+
+        while (!(command.equals("!signup") || command.equals("!login"))) {
+            System.out.println("Would you like to login or signup? Enter either \"!login\" or \"!signup\"");
+            command = scanner.nextLine();
+        }
+        arguments = command.split(" ");
+        PostgresSSHTest.runCommand(user, pass, arguments[0], arguments);
+
+        while (!command.equals("!logout")) {
+            System.out.println("What would you like to do? (Enter \"!help\" for list of commands)");
+            command = scanner.nextLine();
+            arguments = command.split(" ");
+            PostgresSSHTest.runCommand(user, pass, arguments[0], arguments);
+        }
     }
 }

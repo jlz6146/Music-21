@@ -6,18 +6,21 @@ public class AccountCommands {
      * Displays to the user what commands do what
      */
     public static void help(){
-        System.out.println("" +
-                "!help ..." +
-                "!follow [email] ..." +
-                "!unfollow [email] ... " +
-                "!create_collection [name] ..." +
-                "!add_to_collection [name] [song/album] ..." +
-                "!delete_collection [name] ..." +
-                "!change_collection_name [id] [old_name] [new_name] ..." +
-                "" +
-                "" +
-                "" +
-                "" );
+        System.out.println("""
+                !help
+                !search
+                !follow [other email]
+                !unfollow [other email]
+                !create_collection [name]
+                !change_collection_name [id] [new_name]
+                !show_collections
+                !add_songs [collection ID] [song/album ID] ["true" if album; "false" otherwise]
+                !delete_collection [collection ID]
+                !delete_songs [collection ID] [song/album ID] ["true" if album; "false" otherwise]
+                !play_collection [collection ID]
+                !play_song [song ID]
+                !logout
+                """);
 
     }
 
@@ -25,12 +28,27 @@ public class AccountCommands {
     /**
      * Handles the follow command on the database
      * @param conn - the database connection
-     * @param local_email - the email of the follower; person inputting command
+     * @param username - the username of the follower; person inputting command
      * @param other_email - the email of the person to be followed
      */
-    public static void follow(Connection conn, String local_email, String other_email){
+    public static void follow(Connection conn, String username, String other_email){
         //TODO: implement the call in PostgresSSHTest
         ResultSet rset; PreparedStatement stment; boolean exists;
+        String local_email;
+
+        try {
+            stment = conn.prepareStatement("select email from users where username = ?");
+            stment.setString(1, username);
+
+            //Query if a user holds the given email
+            rset = stment.executeQuery();
+            rset.next();
+            local_email = rset.getString(1);
+        }
+        catch(SQLException sqle){
+            System.out.println("SQLException: " +sqle);
+            return;
+        }
 
         try {
             stment = conn.prepareStatement("select email from users where email = ?");
@@ -42,7 +60,7 @@ public class AccountCommands {
             exists = rset.next();
         }
         catch(SQLException sqle){
-            System.out.println("SQLException: " +sqle);
+            System.out.println("Enter a valid email!");
             return;
         }
 
@@ -72,12 +90,27 @@ public class AccountCommands {
     /**
      * Handles the unfollow command on the database
      * @param conn - the database connection
-     * @param local_email - the email of the follower
+     * @param username - the username of the follower
      * @param other_email - the email of the person to be unfollowed
      */
-    public static void unfollow(Connection conn, String local_email, String other_email){
+    public static void unfollow(Connection conn, String username, String other_email){
         //TODO: implement the call in PostgresSSHTest
         PreparedStatement stment; ResultSet rset; boolean exists;
+        String local_email;
+
+        try {
+            stment = conn.prepareStatement("select email from users where username = ?");
+            stment.setString(1, username);
+
+            //Query if a user holds the given email
+            rset = stment.executeQuery();
+            rset.next();
+            local_email = rset.getString(1);
+        }
+        catch(SQLException sqle){
+            System.out.println("SQLException: " +sqle);
+            return;
+        }
 
         try {
             stment = conn.prepareStatement("select following from follows where follower = ? and following = ?");
@@ -227,7 +260,7 @@ public class AccountCommands {
      * @param collection_id a collection the user wants to get song information from
      * @return an integer showing the number of songs in the collection
      */
-    public static int getSongInfo(Connection conn, int collection_id){
+    private static int getSongInfo(Connection conn, int collection_id){
         PreparedStatement pStmt; ResultSet rSet;
         int songs = 0;
         try{
@@ -254,7 +287,7 @@ public class AccountCommands {
      * @param songs an integer with the number of songs in the collection
      * @return a string showing the total runtime of the collection
      */
-    public static String getCount(Connection conn, int collection_id, int songs){
+    private static String getCount(Connection conn, int collection_id, int songs){
         PreparedStatement pStmt; ResultSet rSet;
         if(songs==0){
             return "00:00:00";
@@ -358,6 +391,21 @@ public class AccountCommands {
             }
         }
     }
+
+    public static void delete_collection(Connection conn, String username, int collectionID) {
+        PreparedStatement pStmt;
+        try{
+            pStmt = conn.prepareStatement("delete from collection " +
+                    "where username = ? and collection_id = ?");
+            pStmt.setString(1, username);
+            pStmt.setInt(2, collectionID);
+            pStmt.executeUpdate();
+
+        } catch (SQLException sqle) {
+            System.out.println("SQLException: " + sqle);
+        }
+    }
+
 
     /**
      * Plays an entire collection of songs

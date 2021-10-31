@@ -10,16 +10,18 @@ public class Login {
 
     public static Scanner Scan = new Scanner(System.in);
 
-    public static void signMeUp(Connection conn) throws SQLException {
+    public static String signMeUp(Connection conn) throws SQLException {
 
-        String userName = null;
-        Statement stmt = conn.createStatement();
+        String userName = null, password = null, email = null, firstName = null, lastName = null;
+        PreparedStatement pStmt = conn.prepareStatement("Select count(1) As number From users Where username = ?");
 
         while (true) {
-            System.out.println("Enter Username:");
-            userName = Scan.nextLine();
-            String checkUserQuery = "Select count(1) As number From users Where username = '" + userName + "'";
-            ResultSet rs = stmt.executeQuery(checkUserQuery);
+            while (userName == null || userName.trim().equals("")) {
+                System.out.println("Enter Username:");
+                userName = Scan.nextLine();
+            }
+            pStmt.setString(1, userName);
+            ResultSet rs = pStmt.executeQuery();
             if (rs.next()) {
                 if (rs.getInt("number") != 0) {
                     System.out.println("Username already exists! Please try something else.");
@@ -30,46 +32,70 @@ public class Login {
             }
         }
 
-        System.out.println("Enter Password:");
-        String password = Scan.nextLine();
-        System.out.println("Enter Email");
-        String email = Scan.nextLine();
-        System.out.println("First name");
-        String firstName = Scan.nextLine();
-        System.out.println("Last name");
-        String lastName = Scan.nextLine();
+        while (password == null || password.trim().equals("")) {
+            System.out.println("Enter Password:");
+            password = Scan.nextLine();
+        }
+        while (email == null || email.trim().equals("")) {
+            System.out.println("Enter Email");
+            email = Scan.nextLine();
+        }
+        while (firstName == null || firstName.trim().equals("")) {
+            System.out.println("First name");
+            firstName = Scan.nextLine();
+        }
+        while (lastName == null || lastName.trim().equals("")) {
+            System.out.println("Last name");
+            lastName = Scan.nextLine();
+        }
 
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate now = LocalDate.now();
 
-        String insertUserTemplate = "Insert into users (username, email, password, first_name, last_name, create_date, last_access_date) values ('";
-        String userInput = userName + "', '" + email + "', '" + password + "', '" + firstName + "', '" + lastName + "', '" + dtf.format(now) + "', '" + dtf.format(now) + "')";
+        pStmt = conn.prepareStatement("insert into users (username, email, password, first_name, last_name, create_date, last_access_date) values(?, ?, ?, ?, ?, ?, ?)");
+        pStmt.setString(1, userName);
+        pStmt.setString(2, email);
+        pStmt.setString(3, password);
+        pStmt.setString(4, firstName);
+        pStmt.setString(5, lastName);
+        pStmt.setDate(6, Date.valueOf(dtf.format(now)));
+        pStmt.setDate(7, Date.valueOf(dtf.format(now)));
 
-        stmt.executeQuery(insertUserTemplate + userInput);
+        pStmt.executeUpdate();
 
+        System.out.println("Successfully Signed Up!");
+        return userName;
     }
 
-    public static void logMeIn(Connection conn) throws SQLException{
-
-
+    public static String logMeIn(Connection conn) throws SQLException{
+        String user;
         while (true) {
             System.out.println("Enter Username:");
-            String user = Scan.nextLine();
+            user = Scan.nextLine();
             System.out.println("Enter Password:");
             String password = Scan.nextLine();
 
-            String logInQuery = "Select count(1) As number From users Where username = '" + user + "'";
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(logInQuery);
+            PreparedStatement pStmt = conn.prepareStatement("Select count(1) As number From users Where username = ? and password = ?");
+            pStmt.setString(1, user);
+            pStmt.setString(2, password);
+            ResultSet rs = pStmt.executeQuery();
             if (rs.next()) {
                 if (rs.getInt("number") != 0) {
                     System.out.println("Welcome " + user + "!");
+
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    LocalDate now = LocalDate.now();
+                    pStmt = conn.prepareStatement("update users set last_access_date = ? where username = ?");
+                    pStmt.setDate(1, Date.valueOf(dtf.format(now)));
+                    pStmt.setString(2, user);
+                    pStmt.executeUpdate();
                     break;
                 } else {
                     System.out.println("Sorry, username or password was incorrect. Please try again.");
                 }
             }
         }
+        return user;
     }
 
 }
