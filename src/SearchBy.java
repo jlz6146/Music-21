@@ -58,7 +58,11 @@ public class SearchBy {
 //        ResultSet rs = stmt.executeQuery(sQuery);
         ResultSet rs = pStmt.executeQuery();
         while (rs.next()) {
-            System.out.println(rs.getString("song_id") + " | " + rs.getString("title") + " | " + rs.getString("artist_name") + " | " + rs.getString("album_name") + " | " + rs.getTime("length") + " | " + rs.getDate("release_date") + " | " + rs.getInt("plays"));
+            System.out.println("ID: " + rs.getString("song_id") +
+                    " | Title: \"" + rs.getString("title") + "\" | Artist: \""
+                    + rs.getString("artist_name") + "\" | Album: \"" + rs.getString("album_name") +
+                    "\" | Length: " + rs.getTime("length") + " | Release Date: " +
+                    rs.getDate("release_date") + " | Plays: " + rs.getInt("plays"));
         }
 
         /*System.out.println("reorder: title | artist | album | genre | year         exit search? (y/n)");
