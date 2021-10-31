@@ -100,7 +100,11 @@ public class SearchBy {
                     }
                 }
 
-                PreparedStatement orderQuery = conn.prepareStatement(searchBy + " Order By " + type.label + " " + dir);
+                PreparedStatement orderQuery = conn.prepareStatement(searchBy + "Order By " + type.label + " " + dir);
+                orderQuery.setString(1, "%" + input.toLowerCase() + "%");
+                orderQuery.setString(2, "%" + input.toUpperCase() + "%");
+                orderQuery.setString(3, "%" + input.toLowerCase() + "%");
+                orderQuery.setString(4, "%" + input.toUpperCase() + "%");
                 rs = orderQuery.executeQuery();
                 while (rs.next()) {
                     System.out.println("ID: " + rs.getString("song_id") +
