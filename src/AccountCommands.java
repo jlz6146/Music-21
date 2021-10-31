@@ -244,7 +244,7 @@ public class AccountCommands {
                     songs = getSongInfo(conn, username, rSet.getInt("collection_id"));
                     dur = getCount(conn, username, rSet.getInt("collection_id"), songs);
 
-                    System.out.println("Name: " + collection_name + "ID: " + rSet.getString("collection_id")
+                    System.out.println("Name: " + collection_name + " | ID: " + rSet.getString("collection_id")
                             + " | No.Songs: " + songs + " | Duration: " + dur);
                 } while (rSet.next());
 
@@ -305,7 +305,6 @@ public class AccountCommands {
             pStmt.setString(2, username);
             rSet = pStmt.executeQuery();
             rSet.next();
-            pStmt.close();
             return rSet.getString("runtime");
         } catch (SQLException sqle) {
             System.out.println("SQLException: " + sqle);

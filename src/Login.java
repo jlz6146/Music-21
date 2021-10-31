@@ -24,6 +24,7 @@ public class Login {
             if (rs.next()) {
                 if (rs.getInt("number") != 0) {
                     System.out.println("Username already exists! Please try something else.");
+                    userName = null;
                 }
                 else{
                     break;
