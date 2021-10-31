@@ -9,6 +9,7 @@ public class AccountCommands {
         System.out.println("""
                 !help
                 !search
+                !find_user [other email]
                 !follow [other email]
                 !unfollow [other email]
                 !create_collection [name]
@@ -24,6 +25,25 @@ public class AccountCommands {
 
     }
 
+    /**
+     * Search for new friends by email
+     * @param conn - connection to database
+     * @param email - email of person to search for
+     */
+    public static void find_user(Connection conn, String email){
+        try{
+            PreparedStatement pStat = conn.prepareStatement("select username email from users where email = ?");
+            pStat.setString(1, email);
+
+            ResultSet rs = pStat.executeQuery();
+
+            if(rs.next()){ System.out.println("Name: " +rs.getString("username")+ " | Email: " +rs.getString("email")); }
+            else{ System.out.println(email + " is not attached to a user."); }
+
+            pStat.close();
+        }
+        catch(SQLException sqle){ System.out.println("SQLException: " +sqle); }
+    }
 
     /**
      * Handles the follow command on the database
@@ -147,6 +167,12 @@ public class AccountCommands {
         catch(SQLException sqle){ System.out.println("SQLException: " +sqle); }
     }
 
+    /**
+     * Creates a collection
+     * @param conn - connection to database
+     * @param username - username of user inputting commands
+     * @param coll_name - name of the collection to be made
+     */
     public static void create_collection(Connection conn, String username, String coll_name){
         PreparedStatement stment; ResultSet rset; int coll_id; int max_id;
 
@@ -182,6 +208,13 @@ public class AccountCommands {
         catch(SQLException sqle){ System.out.println("SQLException: " +sqle); }
     }
 
+    /**
+     * Change the name of a collection
+     * @param conn - connection to database
+     * @param username - username of user inputting commands
+     * @param coll_id - id of the collection
+     * @param new_name - new name of the collection
+     */
     public static void change_collection_name(Connection conn, String username, int coll_id, String new_name){
         PreparedStatement stment; ResultSet rset; boolean exists;
 

@@ -43,6 +43,7 @@ public class DatabaseConnection {
             switch (command) {
                 case "!login" -> username = Login.logMeIn(conn);
                 case "!signup" -> username = Login.signMeUp(conn);
+                case "!find_user" -> AccountCommands.find_user(conn, args[1]);
                 case "!help" -> AccountCommands.help();
                 case "!search" -> SearchBy2.Search(conn);
                 case "!follow" -> AccountCommands.follow(conn, username, args[1]);
