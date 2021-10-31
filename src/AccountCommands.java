@@ -234,18 +234,21 @@ public class AccountCommands {
                     "order by collection_name");
             pStmt.setString(1, username);
             rSet = pStmt.executeQuery();
-            while(rSet.next()){
-                String collection_name = rSet.getString("collection_name");
-                int songs;
-                String dur;
-                songs = getSongInfo(conn, rSet.getInt("collection_id"));
-                dur = getCount(conn, rSet.getInt("collection_id"), songs);
+            if (!rSet.next()) {
+                System.out.println("You have no collections created!");
+            } else {
+                do {
+                    String collection_name = rSet.getString("collection_name");
+                    int songs;
+                    String dur;
+                    songs = getSongInfo(conn, rSet.getInt("collection_id"));
+                    dur = getCount(conn, rSet.getInt("collection_id"), songs);
 
-                System.out.println("Name: " + collection_name + " | No.Songs: " + songs + " | Duration: " + dur);
+                    System.out.println("Name: " + collection_name + " | No.Songs: " + songs + " | Duration: " + dur);
+                } while (rSet.next());
+
+                pStmt.close();
             }
-
-            pStmt.close();
-
         } catch (SQLException sqle) {
             System.out.println("SQLExepction: " + sqle);
         }
