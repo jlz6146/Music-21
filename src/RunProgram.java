@@ -1,7 +1,7 @@
 import java.sql.SQLException;
 import java.util.Scanner;
 
-public class Main {
+public class RunProgram {
 
     public static void main(String[] args) throws SQLException {
         // When running input your RIT Username and Password in as arguments
