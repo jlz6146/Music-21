@@ -1,4 +1,3 @@
-import java.sql.ResultSet;
 import java.sql.*;
 import java.util.Scanner;
 
@@ -26,7 +25,7 @@ public class Login {
                     System.out.println("Username already exists! Please try something else.");
                     userName = null;
                 }
-                else{
+                else {
                     break;
                 }
             }

@@ -5,7 +5,7 @@ public class AccountCommands {
     /**
      * Displays to the user what commands do what
      */
-    public static void help(){
+    public static void help() {
         System.out.println("""
                 !help
                 !search
@@ -30,19 +30,19 @@ public class AccountCommands {
      * @param conn - connection to database
      * @param email - email of person to search for
      */
-    public static void find_user(Connection conn, String email){
-        try{
+    public static void find_user(Connection conn, String email) {
+        try {
             PreparedStatement pStat = conn.prepareStatement("select username, email from users where email = ?");
             pStat.setString(1, email);
 
             ResultSet rs = pStat.executeQuery();
 
-            if(rs.next()){ System.out.println("Name: " + rs.getString("username")+ " | Email: " +rs.getString("email")); }
-            else{ System.out.println(email + " is not attached to a user."); }
+            if (rs.next()) { System.out.println("Name: " + rs.getString("username")+ " | Email: " +rs.getString("email")); }
+            else { System.out.println(email + " is not attached to a user."); }
 
             pStat.close();
         }
-        catch(SQLException sqle){ System.out.println("SQLException: " + sqle); }
+        catch (SQLException sqle) { System.out.println("SQLException: " + sqle); }
     }
 
     /**
@@ -51,7 +51,7 @@ public class AccountCommands {
      * @param username - the username of the follower; person inputting command
      * @param other_email - the email of the person to be followed
      */
-    public static void follow(Connection conn, String username, String other_email){
+    public static void follow(Connection conn, String username, String other_email) {
         ResultSet rset; PreparedStatement stment; boolean exists;
         String local_email;
 
@@ -59,12 +59,12 @@ public class AccountCommands {
             stment = conn.prepareStatement("select email from users where username = ?");
             stment.setString(1, username);
 
-            //Query if a user holds the given email
+            // Query if a user holds the given email
             rset = stment.executeQuery();
             rset.next();
             local_email = rset.getString(1);
         }
-        catch(SQLException sqle){
+        catch (SQLException sqle) {
             System.out.println("SQLException: " +sqle);
             return;
         }
@@ -73,18 +73,18 @@ public class AccountCommands {
             stment = conn.prepareStatement("select email from users where email = ?");
             stment.setString(1, other_email);
 
-            //Query if a user holds the given email
+            // Query if a user holds the given email
             rset = stment.executeQuery();
 
             exists = rset.next();
         }
-        catch(SQLException sqle){
+        catch (SQLException sqle) {
             System.out.println("Enter a valid email!");
             return;
         }
 
-        //Check if user exists under given email
-        if(exists){
+        // Check if user exists under given email
+        if (exists) {
             try {
                 stment = conn.prepareStatement("insert into follows (follower, following) values(?, ?)");
                 stment.setString(1, local_email);
@@ -93,17 +93,17 @@ public class AccountCommands {
                 stment.executeUpdate();
                 System.out.println("You are now following: " + other_email + ".");
             }
-            catch(SQLException sqle){
+            catch (SQLException sqle) {
                 System.out.println("You are already following " + other_email);
             }
         }
-        else{
+        else {
             System.out.println(other_email + " is not connected to a user.");
         }
 
 
-        try{ stment.close(); }
-        catch(SQLException sqle){ System.out.println("SQLException: " + sqle); }
+        try { stment.close(); }
+        catch (SQLException sqle) { System.out.println("SQLException: " + sqle); }
     }
 
     /**
@@ -112,7 +112,7 @@ public class AccountCommands {
      * @param username - the username of the follower
      * @param other_email - the email of the person to be unfollowed
      */
-    public static void unfollow(Connection conn, String username, String other_email){
+    public static void unfollow(Connection conn, String username, String other_email) {
         PreparedStatement stment; ResultSet rset; boolean exists;
         String local_email;
 
@@ -120,12 +120,12 @@ public class AccountCommands {
             stment = conn.prepareStatement("select email from users where username = ?");
             stment.setString(1, username);
 
-            //Query if a user holds the given email
+            // Query if a user holds the given email
             rset = stment.executeQuery();
             rset.next();
             local_email = rset.getString(1);
         }
-        catch(SQLException sqle){
+        catch (SQLException sqle) {
             System.out.println("SQLException: " +sqle);
             return;
         }
@@ -135,18 +135,18 @@ public class AccountCommands {
             stment.setString(1, local_email);
             stment.setString(2, other_email);
 
-            //Query the given follows tuple
+            // Query the given follows tuple
             rset = stment.executeQuery();
 
             exists = rset.next();
         }
-        catch(SQLException sqle){
+        catch (SQLException sqle) {
             System.out.println("SQLException: " +sqle);
             return;
         }
 
-        //Check if the follows tuple exists
-        if(exists){
+        // Check if the follows tuple exists
+        if (exists) {
             try {
                 stment = conn.prepareStatement("delete from follows where follower = ? and following = ?");
                 stment.setString(1, local_email);
@@ -155,16 +155,16 @@ public class AccountCommands {
                 stment.executeUpdate();
                 System.out.println("You unfollowed: " + other_email + ".");
             }
-            catch(SQLException sqle){
+            catch (SQLException sqle) {
                 System.out.println("Could not delete tuple: " +sqle);
             }
         }
-        else{
+        else {
             System.out.println("You are currently not following " + other_email + ".");
         }
 
-        try{ stment.close(); }
-        catch(SQLException sqle){ System.out.println("SQLException: " +sqle); }
+        try { stment.close(); }
+        catch (SQLException sqle) { System.out.println("SQLException: " +sqle); }
     }
 
     /**
@@ -173,7 +173,7 @@ public class AccountCommands {
      * @param username - username of user inputting commands
      * @param coll_name - name of the collection to be made
      */
-    public static void create_collection(Connection conn, String username, String coll_name){
+    public static void create_collection(Connection conn, String username, String coll_name) {
         PreparedStatement stment; ResultSet rset; int coll_id; int max_id;
 
         try {
@@ -184,14 +184,14 @@ public class AccountCommands {
             rset.next();
             max_id = rset.getInt("max");
         }
-        catch(SQLException sqle){
+        catch (SQLException sqle) {
             System.out.println("SQLException: " +sqle);
             return;
         }
 
         coll_id = max_id + 1;
 
-        try{
+        try {
             stment = conn.prepareStatement("insert into collection (username, collection_id, collection_name) values(?, ?, ?)");
             stment.setString(1, username);
             stment.setInt(2, coll_id);
@@ -200,12 +200,12 @@ public class AccountCommands {
             stment.executeUpdate();
             System.out.println("Collection: " + coll_name + " has been created with id: " + coll_id + ".");
         }
-        catch(SQLException sqle){
+        catch (SQLException sqle) {
             System.out.println("Could not create collection: " +sqle);
         }
 
-        try{ stment.close(); }
-        catch(SQLException sqle){ System.out.println("SQLException: " +sqle); }
+        try { stment.close(); }
+        catch (SQLException sqle) { System.out.println("SQLException: " +sqle); }
     }
 
     /**
@@ -215,10 +215,10 @@ public class AccountCommands {
      * @param coll_id - id of the collection
      * @param new_name - new name of the collection
      */
-    public static void change_collection_name(Connection conn, String username, int coll_id, String new_name){
+    public static void change_collection_name(Connection conn, String username, int coll_id, String new_name) {
         PreparedStatement stment; ResultSet rset; boolean exists;
 
-        try{
+        try {
             stment = conn.prepareStatement("select collection_id from collection where username = ? and collection_id = ?");
             stment.setString(1, username);
             stment.setInt(2, coll_id);
@@ -227,13 +227,13 @@ public class AccountCommands {
 
             exists = rset.next();
         }
-        catch(SQLException sqle){
+        catch (SQLException sqle) {
             System.out.println("SQLException: " +sqle);
             return;
         }
 
-        if(exists){
-            try{
+        if (exists) {
+            try {
                 stment = conn.prepareStatement("update collection set collection_name = ? where username = ? and collection_id = ?");
                 stment.setString(1, new_name);
                 stment.setString(2, username);
@@ -246,12 +246,12 @@ public class AccountCommands {
                 System.out.println("Could not modify the name of this collection: " +sqle);
             }
         }
-        else{
+        else {
             System.out.println("You have not created a collection with id " + coll_id + ".");
         }
 
-        try{ stment.close(); }
-        catch(SQLException sqle){ System.out.println("SQLException: " +sqle); }
+        try { stment.close(); }
+        catch (SQLException sqle) { System.out.println("SQLException: " +sqle); }
     }
 
     /**
@@ -259,9 +259,9 @@ public class AccountCommands {
      * @param conn a connection to the database storing all necessary data
      * @param username the username of the current user
      */
-    public static void show_collections(Connection conn, String username){
+    public static void show_collections(Connection conn, String username) {
         PreparedStatement pStmt; ResultSet rSet;
-        try{
+        try {
             pStmt = conn.prepareStatement("Select collection_name, collection_id from collection " +
                     "where username = ?" +
                     "order by collection_name");
@@ -295,10 +295,10 @@ public class AccountCommands {
      * @param collection_id a collection the user wants to get song information from
      * @return an integer showing the number of songs in the collection
      */
-    private static int getSongInfo(Connection conn, String username, int collection_id){
+    private static int getSongInfo(Connection conn, String username, int collection_id) {
         PreparedStatement pStmt; ResultSet rSet;
         int songs = 0;
-        try{
+        try {
             pStmt = conn.prepareStatement("Select length from song inner join collection_songs " +
                     "on song.song_id = collection_songs.song_id " +
                     "where collection_songs.collection_id = ? and username = ?");
@@ -325,12 +325,12 @@ public class AccountCommands {
      * @param songs an integer with the number of songs in the collection
      * @return a string showing the total runtime of the collection
      */
-    private static String getCount(Connection conn, String username, int collection_id, int songs){
+    private static String getCount(Connection conn, String username, int collection_id, int songs) {
         PreparedStatement pStmt; ResultSet rSet;
-        if(songs==0){
+        if (songs==0) {
             return "00:00:00";
         }
-        try{
+        try {
             pStmt = conn.prepareStatement("select sum(song.length) as runtime from collection_songs " +
                     "inner join song on song.song_id = collection_songs.song_id " +
                     "where collection_id = ? and username = ?");
@@ -353,10 +353,10 @@ public class AccountCommands {
      * @param ID either a song_id or an album_id to be added to the given collection
      * @param isAlbum a boolean saying if the given ID is an album (true) or a single song_id (false)
      */
-    public static void add_songs(Connection conn, String username, int collection_id, int ID, boolean isAlbum){
+    public static void add_songs(Connection conn, String username, int collection_id, int ID, boolean isAlbum) {
         PreparedStatement pStmt; ResultSet rSet;
-        if(isAlbum){    // need to add entire album to the collection (ID is album_id)
-            try{
+        if (isAlbum) {    // need to add entire album to the collection (ID is album_id)
+            try {
                 pStmt = conn.prepareStatement("select album_id, song_id from album_songs " +
                         "where album_id = ?");
                 pStmt.setInt(1,ID);
@@ -374,8 +374,8 @@ public class AccountCommands {
                 System.out.println("Either the album ID or collection ID was invalid");
             }
         }
-        else{    // only need to add one song to the collection (ID is song_id)
-            try{
+        else {    // only need to add one song to the collection (ID is song_id)
+            try {
                 pStmt = conn.prepareStatement("insert into collection_songs (username, collection_id, song_id) " +
                         "values(?, ?, ?)");
                 pStmt.setString(1,username);
@@ -398,15 +398,15 @@ public class AccountCommands {
      * @param ID either a song_id or an album_id to be removed to the given collection
      * @param isAlbum a boolean saying if the given ID is an album (true) or a single song_id (false)
      */
-    public static void delete_songs(Connection conn, String username, int collection_id, int ID, boolean isAlbum){
+    public static void delete_songs(Connection conn, String username, int collection_id, int ID, boolean isAlbum) {
         PreparedStatement pStmt; ResultSet rSet;
-        if(isAlbum){    // need to delete entire album from the collection (ID is album_id)
-            try{
+        if (isAlbum) {    // need to delete entire album from the collection (ID is album_id)
+            try {
                 pStmt = conn.prepareStatement("select album_id, song_id from album_songs " +
                         "where album_id = ?");
                 pStmt.setInt(1,ID);
                 rSet = pStmt.executeQuery();
-                while(rSet.next()){
+                while (rSet.next()) {
                     pStmt = conn.prepareStatement("delete from collection_songs " +
                             "where username = ? and collection_id = ? and song_id = ?");
                     pStmt.setString(1,username);
@@ -419,8 +419,8 @@ public class AccountCommands {
                 System.out.println("Please enter a valid Album ID");
             }
         }
-        else{    // only need to delete one song from the collection (ID is song_id)
-            try{
+        else {    // only need to delete one song from the collection (ID is song_id)
+            try {
                 pStmt = conn.prepareStatement("delete from collection_songs " +
                         "where username = ? and collection_id = ? and song_id = ?");
                 pStmt.setString(1,username);
@@ -437,7 +437,7 @@ public class AccountCommands {
 
     public static void delete_collection(Connection conn, String username, int collectionID) {
         PreparedStatement pStmt;
-        try{
+        try {
             pStmt = conn.prepareStatement("delete from collection_songs " +
                     "where username = ? and collection_id = ?");
             pStmt.setString(1, username);

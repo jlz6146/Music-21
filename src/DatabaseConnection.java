@@ -39,7 +39,7 @@ public class DatabaseConnection {
             Class.forName(driverName);
             conn = DriverManager.getConnection(url, props);
 
-            // Do something with the database....
+            // Run specified command through database
             switch (command) {
                 case "!login" -> username = Login.logMeIn(conn);
                 case "!signup" -> username = Login.signMeUp(conn);
