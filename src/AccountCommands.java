@@ -405,6 +405,12 @@ public class AccountCommands {
     public static void delete_collection(Connection conn, String username, int collectionID) {
         PreparedStatement pStmt;
         try{
+            pStmt = conn.prepareStatement("delete from collection_songs " +
+                    "where username = ? and collection_id = ?");
+            pStmt.setString(1, username);
+            pStmt.setInt(2, collectionID);
+            pStmt.executeUpdate();
+
             pStmt = conn.prepareStatement("delete from collection " +
                     "where username = ? and collection_id = ?");
             pStmt.setString(1, username);
