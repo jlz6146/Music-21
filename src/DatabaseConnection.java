@@ -69,7 +69,11 @@ public class DatabaseConnection {
             }
 
         } catch (Exception e) {
-            System.out.println("Please enter valid arguments!");
+            if (e instanceof SQLException) {
+                System.err.println("Max Connections Used On Database!");
+            } else {
+                System.out.println("Please enter valid arguments!");
+            }
         } finally {
             if (conn != null && !conn.isClosed()) {
                 conn.close();
