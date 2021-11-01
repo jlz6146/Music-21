@@ -501,6 +501,7 @@ public class AccountCommands {
                     play_song(conn, username, songID);
                 } while (rSet.next());
             }
+            System.out.println("Successfully played all songs in the collection!");
             pStmt.close();
 
         } catch (SQLException sqle) {
@@ -531,6 +532,7 @@ public class AccountCommands {
             } else {
                 update_play_count(conn, username, songID);
             }
+            System.out.println("Successfully played the song!");
             pStmt.close();
 
         } catch (SQLException sqle) {
